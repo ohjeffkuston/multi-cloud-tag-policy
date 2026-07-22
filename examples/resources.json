@@ -1,0 +1,47 @@
+{
+  "policy": {
+    "required_tags": [
+      "owner",
+      "cost_center",
+      "environment",
+      "data_classification"
+    ],
+    "allowed_environments": ["dev", "test", "stage", "prod"],
+    "exempt_resource_types": ["aws:iam:service-linked-role"]
+  },
+  "resources": [
+    {
+      "provider": "aws",
+      "resource_id": "arn:aws:ec2:us-east-1:123456789012:instance/i-012345",
+      "resource_type": "aws:ec2:instance",
+      "tags": {
+        "Owner": "platform@example.com",
+        "Cost-Center": "CC-1042",
+        "Environment": "prod",
+        "Data Classification": "internal"
+      }
+    },
+    {
+      "provider": "azure",
+      "resource_id": "/subscriptions/demo/resourceGroups/rg-app/providers/Microsoft.Compute/virtualMachines/vm-api",
+      "resource_type": "azure:compute:virtual-machine",
+      "tags": {
+        "cost_center": "CC-1042",
+        "environment": "production",
+        "data_classification": "confidential"
+      }
+    },
+    {
+      "provider": "gcp",
+      "resource_id": "//compute.googleapis.com/projects/demo/zones/us-central1-a/instances/worker-1",
+      "resource_type": "gcp:compute:instance",
+      "tags": {
+        "owner": "data@example.com",
+        "cost-center": "CC-2201",
+        "environment": "dev",
+        "data-classification": "internal"
+      }
+    }
+  ]
+}
+

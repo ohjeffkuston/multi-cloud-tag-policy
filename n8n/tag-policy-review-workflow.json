@@ -1,0 +1,96 @@
+{
+  "name": "Multi-Cloud Tag Policy Review",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "multi-cloud-tag-policy-report",
+        "responseMode": "lastNode"
+      },
+      "id": "report-webhook",
+      "name": "Receive Audit Report",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.decision }}",
+              "operation": "notEqual",
+              "value2": "PASS"
+            }
+          ]
+        }
+      },
+      "id": "approval-needed",
+      "name": "Approval Needed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "status",
+              "name": "status",
+              "type": "string",
+              "value": "queued_for_human_review"
+            },
+            {
+              "id": "decision",
+              "name": "decision",
+              "type": "string",
+              "value": "={{ $json.body.decision }}"
+            }
+          ]
+        }
+      },
+      "id": "prepare-review",
+      "name": "Prepare Review Record",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [780, 220]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "status",
+              "name": "status",
+              "type": "string",
+              "value": "compliant_no_action"
+            }
+          ]
+        }
+      },
+      "id": "pass-record",
+      "name": "Record Pass",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [780, 380]
+    }
+  ],
+  "connections": {
+    "Receive Audit Report": {
+      "main": [[{"node": "Approval Needed?", "type": "main", "index": 0}]]
+    },
+    "Approval Needed?": {
+      "main": [
+        [{"node": "Prepare Review Record", "type": "main", "index": 0}],
+        [{"node": "Record Pass", "type": "main", "index": 0}]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "portfolio-day-06"
+}
+
